@@ -1,5 +1,5 @@
 #!/bin/bash -x
-set -euo pipefail
+set -eo pipefail
 
 if [[ -z "$GITHUB_TOKEN" ]]; then
   echo "Set the GITHUB_TOKEN env variable."
