@@ -38,6 +38,11 @@ number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 label_when_approved() {
   # https://developer.github.com/v3/pulls/reviews/#list-reviews-on-a-pull-request
   body=$(curl -sSL -H "${AUTH_HEADER}" -H "${API_HEADER}" "${URI}/repos/${GITHUB_REPOSITORY}/pulls/${number}/reviews?per_page=100")
+  if ! grep '"status"' <<< "$body" > /dev/null; then
+    # We're missing permissions
+    echo "$body" | jq --raw-output '.message,.documentation_url' 1>&2
+    exit 1
+  fi
   reviews=$(echo "$body" | jq --raw-output '.[] | {state: .state} | @base64')
 
   approvals=0
